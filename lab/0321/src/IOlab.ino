@@ -1,39 +1,23 @@
-int x = 0;
+int swPin = 2;
+int ledPin = 13;
+
 void setup(){
+    pinMode(swPin, INPUT);
+    pinMode(ledPin, OUTPUT);
     Serial.begin(9600);
 }
 void loop(){
-    Serial.print("No format");
-    Serial.print("\t");
-
-    Serial.print("DEC");
-    Serial.print("\t");
-
-    Serial.print("HEX");
-    Serial.print("\t");
-
-    Serial.print("OCT");
-    Serial.print("\t");
-
-    Serial.print("BIN");
-    Serial.print("\t");
-
-    for(x = 0; x < 64; x++){
-    Serial.print(x);
-    Serial.print("\t");
-
-    Serial.print(x, DEC);
-    Serial.print("\t");
-
-    Serial.print(x, HEX);
-    Serial.print("\t");
-
-    Serial.print(x, OCT);
-    Serial.print("\t");
-
-    Serial.print(x, BIN);
-
-    delay(200);
+    // sensing part
+    int swValue = digitalRead(swPin);
+    
+    // judge & action part -> forwarding
+    if (swValue == HIGH){
+        digitalWrite(ledPin, HIGH);
+        Serial.println("HIGH");
+    }else{
+        digitalWrite(ledPin, LOW);
+        Serial.println("LOW");
     }
-    Serial.println("");
+    Serial.println(swValue);
+    delay(20);
 }
