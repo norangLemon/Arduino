@@ -1,5 +1,6 @@
 int swPin = 2;
 int ledPin = 13;
+int cnt = 0;
 
 void setup(){
     pinMode(swPin, INPUT);
@@ -13,11 +14,13 @@ void loop(){
     // judge & action part -> forwarding
     if (swValue == HIGH){
         digitalWrite(ledPin, HIGH);
-        Serial.println("HIGH");
+        //Serial.println("HIGH");
+        cnt++; // 누른 시간동안 계속 카운트됨
     }else{
         digitalWrite(ledPin, LOW);
-        Serial.println("LOW");
+        //Serial.println("LOW");
     }
+    Serial.println(cnt);
     Serial.println(swValue);
-    delay(20);
+    delay(200);
 }
