@@ -1,62 +1,35 @@
-// 3월 28일
-int potValue = 0;
-const int MAX = 1023;
-int ledSink = 9; 
-int ledDrive = 8;
-
-
-int State = 4, Next = 4;
+int currState = 0;
+int prevState = 0;
+const int swPin = 2;
+const int ledPin = 13;
 
 void setup(){
-    pinMode(ledSink, OUTPUT);
-    pinMode(ledSink, OUTPUT);
     Serial.begin(9600);
+    pinMode(swPin, INPUT);
+    pinMode(ledPin, OUTPUT);
 }
 
 void loop(){
-    //sensing
-    potValue = analogRead(A0);
+    // sensing
+    currState = digitalRead(swPin);
+    int cnt = 0;
+    int value = detectRisingEdge();
+    prevState = currState;
 
-    // Action: forwording the pot value
-    //Serial.println(potValue);
-   
-    // judgement and classification
-    if(potValue < MAX/4){
-        Next = 0;
-    }else if(potValue < MAX/2){
-        Next = 1;
-    }else if(potValue < MAX*3/4){
-        Next = 2;
-    }else{
-        Next = 3;
-    }
+    if (value) Serial.println(cnt++);
 
-    if (State != Next){
-        State = Next;
-        Serial.print(potValue);
-        switch (State){
-            case 0:
-                digitalWrite(ledDrive, LOW);
-                digitalWrite(ledSink, HIGH);
-                Serial.println(" A");
-                break;
-            case 1:
-                digitalWrite(ledDrive, LOW);
-                digitalWrite(ledSink, LOW);
-                Serial.println(" B");
-                break;
-            case 2:
-                digitalWrite(ledDrive, HIGH);
-                digitalWrite(ledSink, HIGH);
-                Serial.println(" C");
-                break;
-            case 3:
-                digitalWrite(ledDrive, HIGH);
-                digitalWrite(ledSink, LOW);
-                Serial.println(" D");
-                break;
-        }
+    delay(10);
+
+
+}
+
+int detectRisingEdge(){
+    int result = 0;
+    if(prevState == 0 && currState == 1){
+        result = 1;
     }
-    
-    delay(30); /// for our perception
+    else {
+        result = 0;
+    }
+    return result;
 }
