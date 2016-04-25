@@ -1,35 +1,45 @@
-int currState = 0;
-int prevState = 0;
-const int swPin = 2;
-const int ledPin = 13;
+const int numReadings = 10;
 
-void setup(){
-    Serial.begin(9600);
-    pinMode(swPin, INPUT);
-    pinMode(ledPin, OUTPUT);
+int readings[numReadings];      // the readings from the analog input
+int readIndex = 0;              // the index of the current reading
+int total = 0;                  // the running total
+int average = 0;                // the average
+
+int inputPin[] = {A1, A2};
+int prev = 0;
+
+void setup() {
+  // initialize serial communication with computer:
+  Serial.begin(9600);
+  // initialize all the readings to 0:
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
+  }
 }
 
-void loop(){
-    // sensing
-    currState = digitalRead(swPin);
-    int cnt = 0;
-    int value = detectRisingEdge();
-    prevState = currState;
+void loop() {
+  // subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = analogRead(inputPin[0]);
+  // add the reading to the total:
+  total = total + readings[readIndex];
+  // advance to the next position in the array:
+  readIndex = readIndex + 1;
 
-    if (value) Serial.println(cnt++);
+  // if we're at the end of the array...
+  if (readIndex >= numReadings) {
+    // ...wrap around to the beginning:
+    readIndex = 0;
+  }
 
-    delay(10);
-
-
-}
-
-int detectRisingEdge(){
-    int result = 0;
-    if(prevState == 0 && currState == 1){
-        result = 1;
-    }
-    else {
-        result = 0;
-    }
-    return result;
+  // calculate the average:
+  average = total / numReadings;
+  // send it to the computer as ASCII digits
+  
+  Serial.print(average);
+  Serial.print(" ");
+  Serial.println(average - prev);
+  prev = average;
+  delay(1);        // delay in between reads for stability
 }
